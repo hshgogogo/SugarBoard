@@ -1,3 +1,9 @@
 .DS_Store
 .worktrees/
 .codex/.tmp-role-state/
+# frontend
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+apps/web/.next/
