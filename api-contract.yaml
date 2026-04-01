@@ -4,14 +4,13 @@ info:
   version: 1.0.0
   description: |
     Contract-first API for the SSBoard v1 internal prototype.
-    Scope covers homepage, rankings, entity detail, search, and AI analysis job flows.
+    Scope covers homepage, rankings, entity detail, and AI analysis job flows.
 servers:
   - url: http://localhost:8000
     description: Local development
 
 tags:
   - name: Bootstrap
-  - name: Search
   - name: Home
   - name: Rankings
   - name: Entities
@@ -32,51 +31,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FilterBootstrapResponse'
-        '503':
-          $ref: '#/components/responses/ServiceUnavailable'
-
-  /api/v1/search:
-    get:
-      tags: [Search]
-      summary: Global search across works, persons, and characters
-      operationId: searchEntities
-      parameters:
-        - name: q
-          in: query
-          required: true
-          schema:
-            type: string
-            minLength: 1
-            maxLength: 100
-          description: Search keyword
-        - name: types
-          in: query
-          required: false
-          style: form
-          explode: false
-          schema:
-            type: array
-            items:
-              type: string
-              enum: [work, person, character]
-          description: Optional entity type filter
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 20
-            default: 8
-      responses:
-        '200':
-          description: Search results
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SearchResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
         '503':
           $ref: '#/components/responses/ServiceUnavailable'
 
@@ -187,7 +141,7 @@ paths:
           required: false
           schema:
             type: string
-            enum: [queued, planning, running, summarizing, succeeded, failed, cancelled]
+            enum: [queued, planning, running, summarizing, succeeded, failed, blocked, needs_refine, cancelled]
       responses:
         '200':
           description: Paginated analysis jobs ordered by created_at desc
@@ -576,34 +530,47 @@ components:
 
     SourceAttribution:
       type: object
-      required: [id, name, collection_method, authorization_status, last_synced_at]
+      required: [id, source_name, source_type, authorization_status, ingested_at, updated_at]
       properties:
         id:
           type: string
           format: uuid
-        name:
+        source_name:
           type: string
-        collection_method:
+        source_type:
           type: string
           enum:
             [official_api, public_disclosure, partner_export, manual_import, controlled_collection]
         authorization_status:
           type: string
           enum: [licensed, public, internal_manual, restricted, unknown]
-        last_synced_at:
+        ingested_at:
           type: string
           format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        caliber_note:
+          type:
+            - string
+            - 'null'
 
     MethodologyRef:
       type: object
-      required: [key, label, formula_summary]
+      required: [key, label, metric_or_ranking_type, formula_summary]
       properties:
         key:
           type: string
         label:
           type: string
+        metric_or_ranking_type:
+          type: string
         formula_summary:
           type: string
+        caliber_note:
+          type:
+            - string
+            - 'null'
         notes:
           type: array
           items:
@@ -836,13 +803,15 @@ components:
           type: string
         status:
           type: string
-          enum: [queued, planning, running, summarizing, succeeded, failed, cancelled]
+          enum: [queued, planning, running, summarizing, succeeded, failed, blocked, needs_refine, cancelled]
         risk_level:
           type: string
-          enum: [low, medium, high]
+          enum: [green, yellow, red]
         execution_mode:
-          type: string
-          enum: [sync_sql, async_sql, async_script]
+          oneOf:
+            - type: string
+              enum: [sync_sql, async_sql]
+            - type: 'null'
         created_at:
           type: string
           format: date-time
@@ -856,6 +825,15 @@ components:
             - type: 'null'
         can_cancel:
           type: boolean
+        execution_duration_ms:
+          oneOf:
+            - type: integer
+              minimum: 0
+            - type: 'null'
+        status_message:
+          type:
+            - string
+            - 'null'
         progress:
           oneOf:
             - $ref: '#/components/schemas/AnalysisProgress'
@@ -915,39 +893,6 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/FilterBootstrapData'
-        meta:
-          $ref: '#/components/schemas/ResponseMeta'
-
-    SearchResult:
-      type: object
-      required: [entity]
-      properties:
-        entity:
-          $ref: '#/components/schemas/EntityReference'
-        matched_fields:
-          type: array
-          items:
-            type: string
-        highlight:
-          type:
-            - string
-            - 'null'
-
-    SearchData:
-      type: object
-      required: [items]
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/SearchResult'
-
-    SearchResponse:
-      type: object
-      required: [data, meta]
-      properties:
-        data:
-          $ref: '#/components/schemas/SearchData'
         meta:
           $ref: '#/components/schemas/ResponseMeta'
 
@@ -1137,50 +1082,6 @@ components:
           items:
             $ref: '#/components/schemas/RelatedEntityItem'
 
-    GraphNode:
-      type: object
-      required: [id, label, entity_type]
-      properties:
-        id:
-          type: string
-        label:
-          type: string
-        entity_type:
-          type: string
-          enum: [work, person, character]
-        weight:
-          oneOf:
-            - type: number
-            - type: 'null'
-
-    GraphEdge:
-      type: object
-      required: [source_id, target_id, label]
-      properties:
-        source_id:
-          type: string
-        target_id:
-          type: string
-        label:
-          type: string
-        weight:
-          oneOf:
-            - type: number
-            - type: 'null'
-
-    RelationshipGraph:
-      type: object
-      required: [nodes, edges]
-      properties:
-        nodes:
-          type: array
-          items:
-            $ref: '#/components/schemas/GraphNode'
-        edges:
-          type: array
-          items:
-            $ref: '#/components/schemas/GraphEdge'
-
     TimelineEvent:
       type: object
       required: [id, event_date, event_type, title]
@@ -1208,7 +1109,7 @@ components:
     EntityDetailData:
       type: object
       required:
-        [entity, metric_cards, trend_panels, ranking_history, related_groups, relationship_graph, timeline, provenance]
+        [entity, metric_cards, trend_panels, ranking_history, related_groups, timeline, provenance]
       properties:
         entity:
           $ref: '#/components/schemas/EntityProfile'
@@ -1228,8 +1129,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RelatedGroup'
-        relationship_graph:
-          $ref: '#/components/schemas/RelationshipGraph'
         timeline:
           type: array
           items:
@@ -1304,10 +1203,12 @@ components:
             [overview, ranking_compare, trend_explain, entity_deep_dive, source_compare, anomaly_detection, custom_readonly_sql]
         risk_level:
           type: string
-          enum: [low, medium, high]
+          enum: [green, yellow, red]
         execution_mode:
-          type: string
-          enum: [sync_sql, async_sql, async_script]
+          oneOf:
+            - type: string
+              enum: [sync_sql, async_sql]
+            - type: 'null'
         sql_text:
           type:
             - string
@@ -1324,6 +1225,10 @@ components:
             - type: 'null'
         risk_reason:
           type: string
+        refine_suggestions:
+          type: array
+          items:
+            type: string
 
     AnalysisStep:
       type: object
@@ -1331,7 +1236,7 @@ components:
       properties:
         name:
           type: string
-          enum: [planning, sql_execution, sandbox_execution, chart_compilation, summary_generation]
+          enum: [planning, sql_execution, chart_compilation, summary_generation]
         status:
           type: string
           enum: [pending, running, succeeded, failed, skipped]
@@ -1383,7 +1288,7 @@ components:
           format: uuid
         artifact_type:
           type: string
-          enum: [chart, table_csv, sql_text, summary_markdown]
+          enum: [chart, table_snapshot, sql_text, summary_markdown]
         label:
           type: string
         mime_type:
