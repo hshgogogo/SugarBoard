@@ -1,5 +1,1499 @@
 openapi: 3.1.0
 info:
-  title: sugar-ai-team placeholder contract
-  version: 0.1.0
-paths: {}
+  title: SSBoard API Contract
+  version: 1.0.0
+  description: |
+    Contract-first API for the SSBoard v1 internal prototype.
+    Scope covers homepage, rankings, entity detail, search, and AI analysis job flows.
+servers:
+  - url: http://localhost:8000
+    description: Local development
+
+tags:
+  - name: Bootstrap
+  - name: Search
+  - name: Home
+  - name: Rankings
+  - name: Entities
+  - name: Analysis
+
+paths:
+  /api/v1/bootstrap/filters:
+    get:
+      tags: [Bootstrap]
+      summary: Fetch shared filter options and AI starter prompts
+      operationId: getBootstrapFilters
+      parameters:
+        - $ref: '#/components/parameters/AsOfDate'
+      responses:
+        '200':
+          description: Bootstrap metadata for homepage, rankings, and AI workbench
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterBootstrapResponse'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /api/v1/search:
+    get:
+      tags: [Search]
+      summary: Global search across works, persons, and characters
+      operationId: searchEntities
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 100
+          description: Search keyword
+        - name: types
+          in: query
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [work, person, character]
+          description: Optional entity type filter
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+            default: 8
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /api/v1/home/overview:
+    get:
+      tags: [Home]
+      summary: Fetch homepage KPI, ranking preview, comparison charts, and recent analysis jobs
+      operationId: getHomeOverview
+      parameters:
+        - $ref: '#/components/parameters/AsOfDate'
+        - $ref: '#/components/parameters/SourceIds'
+        - $ref: '#/components/parameters/PlatformIds'
+        - $ref: '#/components/parameters/Genres'
+      responses:
+        '200':
+          description: Homepage overview bundle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HomeOverviewResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /api/v1/rankings/{rankingType}:
+    get:
+      tags: [Rankings]
+      summary: Fetch a filtered ranking page bundle
+      operationId: getRankingPage
+      parameters:
+        - $ref: '#/components/parameters/RankingType'
+        - $ref: '#/components/parameters/AsOfDate'
+        - $ref: '#/components/parameters/Window'
+        - $ref: '#/components/parameters/SourceIds'
+        - $ref: '#/components/parameters/PlatformIds'
+        - $ref: '#/components/parameters/Genres'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - name: sort_by
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [rank, score, delta_value, delta_percent]
+            default: rank
+        - name: sort_order
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: asc
+      responses:
+        '200':
+          description: Ranking page data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RankingListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /api/v1/entities/{entityType}/{entityId}:
+    get:
+      tags: [Entities]
+      summary: Fetch a full detail page bundle for one entity
+      operationId: getEntityDetail
+      parameters:
+        - $ref: '#/components/parameters/EntityType'
+        - $ref: '#/components/parameters/EntityId'
+        - $ref: '#/components/parameters/AsOfDate'
+        - name: trend_window
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [7d, 30d, 90d, 365d]
+            default: 30d
+      responses:
+        '200':
+          description: Entity detail bundle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityDetailResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /api/v1/analysis/jobs:
+    get:
+      tags: [Analysis]
+      summary: List recent analysis jobs
+      operationId: listAnalysisJobs
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [queued, planning, running, summarizing, succeeded, failed, cancelled]
+      responses:
+        '200':
+          description: Paginated analysis jobs ordered by created_at desc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisJobListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+    post:
+      tags: [Analysis]
+      summary: Submit an AI analysis request
+      operationId: createAnalysisJob
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalysisRequest'
+      responses:
+        '200':
+          description: Analysis completed within sync budget
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisJobResponse'
+        '202':
+          description: Analysis accepted and continues asynchronously
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisJobResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /api/v1/analysis/jobs/{jobId}:
+    get:
+      tags: [Analysis]
+      summary: Fetch a single analysis job including plan, progress, and result when available
+      operationId: getAnalysisJob
+      parameters:
+        - $ref: '#/components/parameters/JobId'
+      responses:
+        '200':
+          description: Analysis job detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisJobResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /api/v1/analysis/jobs/{jobId}/cancel:
+    post:
+      tags: [Analysis]
+      summary: Request cancellation for a non-terminal analysis job
+      operationId: cancelAnalysisJob
+      parameters:
+        - $ref: '#/components/parameters/JobId'
+      responses:
+        '202':
+          description: Cancellation accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisJobResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+components:
+  parameters:
+    AsOfDate:
+      name: as_of
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+      description: Snapshot date. If omitted, latest published snapshot is used.
+    Window:
+      name: window
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [7d, 30d, 90d, 365d]
+        default: 30d
+      description: Time window for trend comparison or score aggregation.
+    SourceIds:
+      name: source_ids
+      in: query
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+          format: uuid
+      description: Source identifiers joined by commas.
+    PlatformIds:
+      name: platform_ids
+      in: query
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+          format: uuid
+      description: Platform identifiers joined by commas.
+    Genres:
+      name: genres
+      in: query
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+      description: Genre labels joined by commas.
+    Page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PageSize:
+      name: page_size
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    RankingType:
+      name: rankingType
+      in: path
+      required: true
+      schema:
+        type: string
+        enum: [artists, characters, series, movies]
+    EntityType:
+      name: entityType
+      in: path
+      required: true
+      schema:
+        type: string
+        enum: [work, person, character]
+    EntityId:
+      name: entityId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    JobId:
+      name: jobId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    BadRequest:
+      description: Invalid request payload or query parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: Request conflicts with current resource state
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    UnprocessableEntity:
+      description: Request is valid but cannot be executed under business/guardrail rules
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    TooManyRequests:
+      description: Queue or service capacity exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ServiceUnavailable:
+      description: Downstream dependency is unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    ResponseMeta:
+      type: object
+      required: [request_id, generated_at, warnings]
+      properties:
+        request_id:
+          type: string
+          format: uuid
+        generated_at:
+          type: string
+          format: date-time
+        warnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiWarning'
+        pagination:
+          oneOf:
+            - $ref: '#/components/schemas/PaginationMeta'
+            - type: 'null'
+
+    PaginationMeta:
+      type: object
+      required: [page, page_size, total]
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        page_size:
+          type: integer
+          minimum: 1
+        total:
+          type: integer
+          minimum: 0
+
+    ApiWarning:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          example: STALE_DATA
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+
+    ApiError:
+      type: object
+      required: [code, message, retryable]
+      properties:
+        code:
+          type: string
+          example: ENTITY_NOT_FOUND
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+        retryable:
+          type: boolean
+        hint:
+          type:
+            - string
+            - 'null'
+
+    ErrorResponse:
+      type: object
+      required: [error, meta]
+      properties:
+        error:
+          $ref: '#/components/schemas/ApiError'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+
+    FilterSet:
+      type: object
+      properties:
+        as_of:
+          type:
+            - string
+            - 'null'
+          format: date
+        window:
+          type:
+            - string
+            - 'null'
+          enum: [7d, 30d, 90d, 365d, null]
+        source_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        platform_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        genres:
+          type: array
+          items:
+            type: string
+
+    FilterOption:
+      type: object
+      required: [id, label]
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        count:
+          oneOf:
+            - type: integer
+              minimum: 0
+            - type: 'null'
+
+    DateOption:
+      type: object
+      required: [value, label]
+      properties:
+        value:
+          type: string
+          format: date
+        label:
+          type: string
+
+    RecommendedQuestion:
+      type: object
+      required: [id, label, question]
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        question:
+          type: string
+
+    ProvenanceBlock:
+      type: object
+      required:
+        [snapshot_id, snapshot_date, refreshed_at, freshness_status, sources, methodology_refs]
+      properties:
+        snapshot_id:
+          type: string
+          format: uuid
+        snapshot_date:
+          type: string
+          format: date
+        refreshed_at:
+          type: string
+          format: date-time
+        freshness_status:
+          type: string
+          enum: [fresh, delayed, stale, unknown]
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceAttribution'
+        methodology_refs:
+          type: array
+          items:
+            $ref: '#/components/schemas/MethodologyRef'
+
+    SourceAttribution:
+      type: object
+      required: [id, name, collection_method, authorization_status, last_synced_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        collection_method:
+          type: string
+          enum:
+            [official_api, public_disclosure, partner_export, manual_import, controlled_collection]
+        authorization_status:
+          type: string
+          enum: [licensed, public, internal_manual, restricted, unknown]
+        last_synced_at:
+          type: string
+          format: date-time
+
+    MethodologyRef:
+      type: object
+      required: [key, label, formula_summary]
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+        formula_summary:
+          type: string
+        notes:
+          type: array
+          items:
+            type: string
+
+    EntityReference:
+      type: object
+      required: [id, entity_type, name]
+      properties:
+        id:
+          type: string
+          format: uuid
+        entity_type:
+          type: string
+          enum: [work, person, character]
+        name:
+          type: string
+        subtitle:
+          type:
+            - string
+            - 'null'
+        work_type:
+          oneOf:
+            - type: string
+              enum: [movie, series]
+            - type: 'null'
+        avatar_url:
+          type:
+            - string
+            - 'null'
+          format: uri
+        tags:
+          type: array
+          items:
+            type: string
+
+    LabelValue:
+      type: object
+      required: [label, value]
+      properties:
+        label:
+          type: string
+        value:
+          type: string
+
+    MetricCard:
+      type: object
+      required: [key, label, value]
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+        value:
+          type: number
+        unit:
+          type:
+            - string
+            - 'null'
+        delta_value:
+          oneOf:
+            - type: number
+            - type: 'null'
+        delta_percent:
+          oneOf:
+            - type: number
+            - type: 'null'
+        trend_direction:
+          oneOf:
+            - type: string
+              enum: [up, down, flat]
+            - type: 'null'
+
+    ChartPoint:
+      type: object
+      required: [x, y]
+      properties:
+        x:
+          type: string
+        y:
+          type: number
+        label:
+          type:
+            - string
+            - 'null'
+        meta:
+          type: object
+          additionalProperties: true
+
+    ChartSeries:
+      type: object
+      required: [name, points]
+      properties:
+        name:
+          type: string
+        color:
+          type:
+            - string
+            - 'null'
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChartPoint'
+
+    ChartSpec:
+      type: object
+      required: [chart_type, title, series]
+      properties:
+        chart_type:
+          type: string
+          enum: [line, bar, area, pie, stacked_bar]
+        title:
+          type: string
+        subtitle:
+          type:
+            - string
+            - 'null'
+        x_axis_label:
+          type:
+            - string
+            - 'null'
+        y_axis_label:
+          type:
+            - string
+            - 'null'
+        unit:
+          type:
+            - string
+            - 'null'
+        stacked:
+          type: boolean
+          default: false
+        series:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChartSeries'
+        note:
+          type:
+            - string
+            - 'null'
+
+    SourceMetricBreakdown:
+      type: object
+      required: [source_id, source_name, metric_value]
+      properties:
+        source_id:
+          type: string
+          format: uuid
+        source_name:
+          type: string
+        metric_value:
+          type: number
+        metric_ratio:
+          oneOf:
+            - type: number
+            - type: 'null'
+
+    RankingPreviewItem:
+      type: object
+      required: [rank, entity, score]
+      properties:
+        rank:
+          type: integer
+          minimum: 1
+        entity:
+          $ref: '#/components/schemas/EntityReference'
+        score:
+          type: number
+        delta_percent:
+          oneOf:
+            - type: number
+            - type: 'null'
+        tags:
+          type: array
+          items:
+            type: string
+
+    RankingPanel:
+      type: object
+      required: [ranking_type, title, items, provenance]
+      properties:
+        ranking_type:
+          type: string
+          enum: [artists, characters, series, movies]
+        title:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RankingPreviewItem'
+        provenance:
+          $ref: '#/components/schemas/ProvenanceBlock'
+
+    KpiCard:
+      type: object
+      required: [key, label, value]
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+        value:
+          type: number
+        unit:
+          type:
+            - string
+            - 'null'
+        delta_value:
+          oneOf:
+            - type: number
+            - type: 'null'
+        delta_percent:
+          oneOf:
+            - type: number
+            - type: 'null'
+        emphasis:
+          type:
+            - string
+            - 'null'
+
+    AnalysisJobSummary:
+      type: object
+      required:
+        [id, question, status, risk_level, execution_mode, created_at, updated_at, can_cancel]
+      properties:
+        id:
+          type: string
+          format: uuid
+        question:
+          type: string
+        status:
+          type: string
+          enum: [queued, planning, running, summarizing, succeeded, failed, cancelled]
+        risk_level:
+          type: string
+          enum: [low, medium, high]
+        execution_mode:
+          type: string
+          enum: [sync_sql, async_sql, async_script]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        finished_at:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+        can_cancel:
+          type: boolean
+        progress:
+          oneOf:
+            - $ref: '#/components/schemas/AnalysisProgress'
+            - type: 'null'
+        last_error:
+          oneOf:
+            - $ref: '#/components/schemas/AnalysisJobError'
+            - type: 'null'
+
+    AnalysisProgress:
+      type: object
+      required: [current_step, percent]
+      properties:
+        current_step:
+          type: string
+          enum: [queued, planning, running, summarizing]
+        percent:
+          type: integer
+          minimum: 0
+          maximum: 100
+        message:
+          type:
+            - string
+            - 'null'
+
+    FilterBootstrapData:
+      type: object
+      required:
+        [default_filters, available_dates, sources, platforms, genres, recommended_questions]
+      properties:
+        default_filters:
+          $ref: '#/components/schemas/FilterSet'
+        available_dates:
+          type: array
+          items:
+            $ref: '#/components/schemas/DateOption'
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterOption'
+        platforms:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterOption'
+        genres:
+          type: array
+          items:
+            $ref: '#/components/schemas/FilterOption'
+        recommended_questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecommendedQuestion'
+
+    FilterBootstrapResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: '#/components/schemas/FilterBootstrapData'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+
+    SearchResult:
+      type: object
+      required: [entity]
+      properties:
+        entity:
+          $ref: '#/components/schemas/EntityReference'
+        matched_fields:
+          type: array
+          items:
+            type: string
+        highlight:
+          type:
+            - string
+            - 'null'
+
+    SearchData:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResult'
+
+    SearchResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: '#/components/schemas/SearchData'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+
+    HomeOverviewData:
+      type: object
+      required: [filters, kpis, ranking_panels, analysis_panels, recent_analysis_jobs, provenance]
+      properties:
+        filters:
+          $ref: '#/components/schemas/FilterSet'
+        kpis:
+          type: array
+          items:
+            $ref: '#/components/schemas/KpiCard'
+        ranking_panels:
+          type: array
+          items:
+            $ref: '#/components/schemas/RankingPanel'
+        analysis_panels:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChartSpec'
+        recent_analysis_jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalysisJobSummary'
+        provenance:
+          $ref: '#/components/schemas/ProvenanceBlock'
+
+    HomeOverviewResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: '#/components/schemas/HomeOverviewData'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+
+    RankingItem:
+      type: object
+      required: [rank, entity, score]
+      properties:
+        rank:
+          type: integer
+          minimum: 1
+        previous_rank:
+          oneOf:
+            - type: integer
+              minimum: 1
+            - type: 'null'
+        rank_change:
+          oneOf:
+            - type: integer
+            - type: 'null'
+        entity:
+          $ref: '#/components/schemas/EntityReference'
+        score:
+          type: number
+        delta_value:
+          oneOf:
+            - type: number
+            - type: 'null'
+        delta_percent:
+          oneOf:
+            - type: number
+            - type: 'null'
+        tags:
+          type: array
+          items:
+            type: string
+        sparkline:
+          oneOf:
+            - $ref: '#/components/schemas/ChartSpec'
+            - type: 'null'
+        source_breakdown:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceMetricBreakdown'
+
+    RankingListData:
+      type: object
+      required:
+        [ranking_type, title, filters, items, analysis_panels, provenance]
+      properties:
+        ranking_type:
+          type: string
+          enum: [artists, characters, series, movies]
+        title:
+          type: string
+        filters:
+          $ref: '#/components/schemas/FilterSet'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RankingItem'
+        analysis_panels:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChartSpec'
+        provenance:
+          $ref: '#/components/schemas/ProvenanceBlock'
+
+    RankingListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: '#/components/schemas/RankingListData'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+
+    EntityProfile:
+      type: object
+      required: [id, entity_type, name, hero_facts, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        entity_type:
+          type: string
+          enum: [work, person, character]
+        name:
+          type: string
+        subtitle:
+          type:
+            - string
+            - 'null'
+        avatar_url:
+          type:
+            - string
+            - 'null'
+          format: uri
+        description:
+          type:
+            - string
+            - 'null'
+        hero_facts:
+          type: array
+          items:
+            $ref: '#/components/schemas/LabelValue'
+        tags:
+          type: array
+          items:
+            type: string
+        updated_at:
+          type: string
+          format: date-time
+
+    RankingHistoryEntry:
+      type: object
+      required: [snapshot_date, ranking_type, rank]
+      properties:
+        snapshot_date:
+          type: string
+          format: date
+        ranking_type:
+          type: string
+          enum: [artists, characters, series, movies]
+        rank:
+          type: integer
+          minimum: 1
+
+    RelatedEntityItem:
+      type: object
+      required: [entity, relation_label]
+      properties:
+        entity:
+          $ref: '#/components/schemas/EntityReference'
+        relation_label:
+          type: string
+        metric_label:
+          type:
+            - string
+            - 'null'
+        metric_value:
+          oneOf:
+            - type: number
+            - type: 'null'
+
+    RelatedGroup:
+      type: object
+      required: [title, items]
+      properties:
+        title:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedEntityItem'
+
+    GraphNode:
+      type: object
+      required: [id, label, entity_type]
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        entity_type:
+          type: string
+          enum: [work, person, character]
+        weight:
+          oneOf:
+            - type: number
+            - type: 'null'
+
+    GraphEdge:
+      type: object
+      required: [source_id, target_id, label]
+      properties:
+        source_id:
+          type: string
+        target_id:
+          type: string
+        label:
+          type: string
+        weight:
+          oneOf:
+            - type: number
+            - type: 'null'
+
+    RelationshipGraph:
+      type: object
+      required: [nodes, edges]
+      properties:
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/GraphNode'
+        edges:
+          type: array
+          items:
+            $ref: '#/components/schemas/GraphEdge'
+
+    TimelineEvent:
+      type: object
+      required: [id, event_date, event_type, title]
+      properties:
+        id:
+          type: string
+          format: uuid
+        event_date:
+          type: string
+          format: date
+        event_type:
+          type: string
+          enum: [announcement, premiere, release, award, ranking_peak, other]
+        title:
+          type: string
+        description:
+          type:
+            - string
+            - 'null'
+        source_name:
+          type:
+            - string
+            - 'null'
+
+    EntityDetailData:
+      type: object
+      required:
+        [entity, metric_cards, trend_panels, ranking_history, related_groups, relationship_graph, timeline, provenance]
+      properties:
+        entity:
+          $ref: '#/components/schemas/EntityProfile'
+        metric_cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricCard'
+        trend_panels:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChartSpec'
+        ranking_history:
+          type: array
+          items:
+            $ref: '#/components/schemas/RankingHistoryEntry'
+        related_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedGroup'
+        relationship_graph:
+          $ref: '#/components/schemas/RelationshipGraph'
+        timeline:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimelineEvent'
+        provenance:
+          $ref: '#/components/schemas/ProvenanceBlock'
+
+    EntityDetailResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: '#/components/schemas/EntityDetailData'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+
+    AnalysisContext:
+      type: object
+      properties:
+        filters:
+          $ref: '#/components/schemas/FilterSet'
+        ranking_type:
+          oneOf:
+            - type: string
+              enum: [artists, characters, series, movies]
+            - type: 'null'
+        entity_refs:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityReference'
+
+    AnalysisRequest:
+      type: object
+      required: [question]
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 1000
+        context:
+          oneOf:
+            - $ref: '#/components/schemas/AnalysisContext'
+            - type: 'null'
+
+    GuardrailSummary:
+      type: object
+      required: [allowed_views, row_limit, timeout_ms]
+      properties:
+        allowed_views:
+          type: array
+          items:
+            type: string
+        row_limit:
+          type: integer
+          minimum: 1
+        timeout_ms:
+          type: integer
+          minimum: 1
+        notes:
+          type: array
+          items:
+            type: string
+
+    AnalysisPlan:
+      type: object
+      required:
+        [intent, risk_level, execution_mode, sql_explanation, guardrail_summary, data_scope, risk_reason]
+      properties:
+        intent:
+          type: string
+          enum:
+            [overview, ranking_compare, trend_explain, entity_deep_dive, source_compare, anomaly_detection, custom_readonly_sql]
+        risk_level:
+          type: string
+          enum: [low, medium, high]
+        execution_mode:
+          type: string
+          enum: [sync_sql, async_sql, async_script]
+        sql_text:
+          type:
+            - string
+            - 'null'
+        sql_explanation:
+          type: string
+        guardrail_summary:
+          $ref: '#/components/schemas/GuardrailSummary'
+        data_scope:
+          $ref: '#/components/schemas/FilterSet'
+        recommended_visualization:
+          oneOf:
+            - $ref: '#/components/schemas/ChartSpec'
+            - type: 'null'
+        risk_reason:
+          type: string
+
+    AnalysisStep:
+      type: object
+      required: [name, status, started_at]
+      properties:
+        name:
+          type: string
+          enum: [planning, sql_execution, sandbox_execution, chart_compilation, summary_generation]
+        status:
+          type: string
+          enum: [pending, running, succeeded, failed, skipped]
+        started_at:
+          type: string
+          format: date-time
+        finished_at:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+        error_code:
+          type:
+            - string
+            - 'null'
+
+    TableColumn:
+      type: object
+      required: [key, label, data_type]
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+        data_type:
+          type: string
+          enum: [string, integer, number, date, datetime]
+
+    TablePreview:
+      type: object
+      required: [columns, rows]
+      properties:
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/TableColumn'
+        rows:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+
+    AnalysisArtifact:
+      type: object
+      required: [id, artifact_type, label]
+      properties:
+        id:
+          type: string
+          format: uuid
+        artifact_type:
+          type: string
+          enum: [chart, table_csv, sql_text, summary_markdown]
+        label:
+          type: string
+        mime_type:
+          type:
+            - string
+            - 'null'
+        download_url:
+          type:
+            - string
+            - 'null'
+          format: uri
+        expires_at:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+
+    AnalysisResult:
+      type: object
+      required: [summary_markdown, chart, table_preview, artifacts, provenance]
+      properties:
+        summary_markdown:
+          type: string
+        chart:
+          $ref: '#/components/schemas/ChartSpec'
+        table_preview:
+          $ref: '#/components/schemas/TablePreview'
+        artifacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalysisArtifact'
+        provenance:
+          $ref: '#/components/schemas/ProvenanceBlock'
+
+    AnalysisJobError:
+      type: object
+      required: [code, message, retryable]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        retryable:
+          type: boolean
+        step:
+          type:
+            - string
+            - 'null'
+        retry_after_seconds:
+          oneOf:
+            - type: integer
+              minimum: 0
+            - type: 'null'
+        details:
+          type: object
+          additionalProperties: true
+
+    AnalysisJob:
+      allOf:
+        - $ref: '#/components/schemas/AnalysisJobSummary'
+        - type: object
+          required: [plan, steps]
+          properties:
+            context:
+              oneOf:
+                - $ref: '#/components/schemas/AnalysisContext'
+                - type: 'null'
+            plan:
+              oneOf:
+                - $ref: '#/components/schemas/AnalysisPlan'
+                - type: 'null'
+            steps:
+              type: array
+              items:
+                $ref: '#/components/schemas/AnalysisStep'
+            result:
+              oneOf:
+                - $ref: '#/components/schemas/AnalysisResult'
+                - type: 'null'
+
+    AnalysisJobListData:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalysisJobSummary'
+
+    AnalysisJobListResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: '#/components/schemas/AnalysisJobListData'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+
+    AnalysisJobData:
+      type: object
+      required: [job]
+      properties:
+        job:
+          $ref: '#/components/schemas/AnalysisJob'
+
+    AnalysisJobResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          $ref: '#/components/schemas/AnalysisJobData'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
