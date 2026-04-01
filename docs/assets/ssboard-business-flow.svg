@@ -1,0 +1,63 @@
+<svg width="1600" height="360" viewBox="0 0 1600 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="360" rx="24" fill="#0F1115"/>
+  <text x="60" y="70" fill="#F3F5F7" font-size="32" font-family="PingFang SC, Microsoft YaHei, sans-serif" font-weight="700">SSBoard 业务流程图</text>
+  <text x="60" y="105" fill="#AAB1BF" font-size="16" font-family="PingFang SC, Microsoft YaHei, sans-serif">数据接入 → 清洗建模 → 榜单计算 → 页面展示 → AI 分析 → 结果产出</text>
+
+  <defs>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#2A2F3B"/>
+      <stop offset="1" stop-color="#171A21"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#D7B46A"/>
+      <stop offset="1" stop-color="#7BC6FF"/>
+    </linearGradient>
+  </defs>
+
+  <g font-family="PingFang SC, Microsoft YaHei, sans-serif">
+    <rect x="60" y="150" width="210" height="120" rx="18" fill="url(#panel)" stroke="#D7B46A" stroke-opacity="0.45"/>
+    <text x="84" y="188" fill="#F3F5F7" font-size="24" font-weight="700">1. 数据接入</text>
+    <text x="84" y="220" fill="#AAB1BF" font-size="16">开放 API / 授权报表</text>
+    <text x="84" y="246" fill="#AAB1BF" font-size="16">手工导入 / 公开页面</text>
+
+    <rect x="320" y="150" width="210" height="120" rx="18" fill="url(#panel)" stroke="#D7B46A" stroke-opacity="0.45"/>
+    <text x="344" y="188" fill="#F3F5F7" font-size="24" font-weight="700">2. 清洗建模</text>
+    <text x="344" y="220" fill="#AAB1BF" font-size="16">字段标准化 / 实体映射</text>
+    <text x="344" y="246" fill="#AAB1BF" font-size="16">口径对齐 / 快照入库</text>
+
+    <rect x="580" y="150" width="210" height="120" rx="18" fill="url(#panel)" stroke="#D7B46A" stroke-opacity="0.45"/>
+    <text x="604" y="188" fill="#F3F5F7" font-size="24" font-weight="700">3. 榜单计算</text>
+    <text x="604" y="220" fill="#AAB1BF" font-size="16">日榜周榜 / 涨跌分析</text>
+    <text x="604" y="246" fill="#AAB1BF" font-size="16">实体聚合 / 指标口径</text>
+
+    <rect x="840" y="150" width="210" height="120" rx="18" fill="url(#panel)" stroke="#D7B46A" stroke-opacity="0.45"/>
+    <text x="864" y="188" fill="#F3F5F7" font-size="24" font-weight="700">4. 页面展示</text>
+    <text x="864" y="220" fill="#AAB1BF" font-size="16">首页 / 榜单页 / 详情页</text>
+    <text x="864" y="246" fill="#AAB1BF" font-size="16">趋势图 / 来源筛选</text>
+
+    <rect x="1100" y="150" width="210" height="120" rx="18" fill="url(#panel)" stroke="#D7B46A" stroke-opacity="0.45"/>
+    <text x="1124" y="188" fill="#F3F5F7" font-size="24" font-weight="700">5. AI 分析</text>
+    <text x="1124" y="220" fill="#AAB1BF" font-size="16">NL2SQL / 自动图表</text>
+    <text x="1124" y="246" fill="#AAB1BF" font-size="16">脚本沙箱 / 风险分级</text>
+
+    <rect x="1360" y="150" width="180" height="120" rx="18" fill="url(#panel)" stroke="#D7B46A" stroke-opacity="0.45"/>
+    <text x="1384" y="188" fill="#F3F5F7" font-size="24" font-weight="700">6. 结果产出</text>
+    <text x="1384" y="220" fill="#AAB1BF" font-size="16">图表导出 / 摘要</text>
+    <text x="1384" y="246" fill="#AAB1BF" font-size="16">汇报材料 / 复用</text>
+  </g>
+
+  <g stroke="url(#line)" stroke-width="4">
+    <line x1="270" y1="210" x2="320" y2="210"/>
+    <line x1="530" y1="210" x2="580" y2="210"/>
+    <line x1="790" y1="210" x2="840" y2="210"/>
+    <line x1="1050" y1="210" x2="1100" y2="210"/>
+    <line x1="1310" y1="210" x2="1360" y2="210"/>
+  </g>
+  <g fill="#7BC6FF">
+    <path d="M320 210L306 202V218L320 210Z"/>
+    <path d="M580 210L566 202V218L580 210Z"/>
+    <path d="M840 210L826 202V218L840 210Z"/>
+    <path d="M1100 210L1086 202V218L1100 210Z"/>
+    <path d="M1360 210L1346 202V218L1360 210Z"/>
+  </g>
+</svg>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SSBoard 业务流程与页面原型</title>
+    <style>
+      :root {
+        --bg: #0f1115;
+        --panel: #171a21;
+        --panel-2: #1d2230;
+        --line: #7d8597;
+        --text: #f3f5f7;
+        --muted: #aab1bf;
+        --accent: #d7b46a;
+        --accent-2: #7bc6ff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(215, 180, 106, 0.1), transparent 28%),
+          radial-gradient(circle at top right, rgba(123, 198, 255, 0.08), transparent 32%),
+          var(--bg);
+        color: var(--text);
+      }
+
+      .page {
+        width: 1600px;
+        margin: 0 auto;
+        padding: 40px 36px 80px;
+      }
+
+      .title {
+        margin-bottom: 10px;
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+
+      .subtitle {
+        margin: 0 0 26px;
+        color: var(--muted);
+        font-size: 16px;
+      }
+
+      .section {
+        margin-top: 28px;
+        padding: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        background: rgba(23, 26, 33, 0.86);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+      }
+
+      .section h2 {
+        margin: 0 0 16px;
+        color: var(--accent);
+        font-size: 22px;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 18px;
+        align-items: center;
+      }
+
+      .node {
+        position: relative;
+        min-height: 106px;
+        padding: 16px;
+        border: 1px solid rgba(215, 180, 106, 0.45);
+        border-radius: 16px;
+        background: linear-gradient(180deg, rgba(215, 180, 106, 0.12), rgba(255, 255, 255, 0.03));
+      }
+
+      .node strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+
+      .node span {
+        display: block;
+        color: var(--muted);
+        line-height: 1.45;
+        font-size: 14px;
+      }
+
+      .arrow {
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        position: relative;
+        top: -3px;
+      }
+
+      .arrow::after {
+        content: "";
+        position: absolute;
+        top: -4px;
+        right: -2px;
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        border-left: 10px solid var(--accent-2);
+      }
+
+      .artboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+      }
+
+      .artboard {
+        min-height: 560px;
+        border-radius: 22px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: #0e1218;
+      }
+
+      .artboard-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .artboard-header strong {
+        font-size: 18px;
+      }
+
+      .tag {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(215, 180, 106, 0.15);
+        color: var(--accent);
+        font-size: 12px;
+      }
+
+      .shell {
+        padding: 18px;
+      }
+
+      .nav {
+        display: grid;
+        grid-template-columns: 140px 1fr 320px;
+        gap: 14px;
+        margin-bottom: 16px;
+      }
+
+      .box {
+        padding: 14px;
+        border: 1px dashed rgba(255, 255, 255, 0.22);
+        border-radius: 16px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .hero-row,
+      .kpi-row,
+      .two-col,
+      .rank-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .kpi-row {
+        grid-template-columns: repeat(4, 1fr);
+        margin-bottom: 14px;
+      }
+
+      .rank-grid {
+        grid-template-columns: repeat(2, 1fr);
+        margin-bottom: 14px;
+      }
+
+      .two-col {
+        grid-template-columns: 1.4fr 1fr;
+      }
+
+      .table-lines div,
+      .mini-lines div {
+        height: 10px;
+        margin-top: 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .mini-lines div:nth-child(2n) {
+        width: 78%;
+      }
+
+      .table-lines div:nth-child(3n) {
+        width: 64%;
+      }
+
+      .side-layout {
+        display: grid;
+        grid-template-columns: 240px 1fr 320px;
+        gap: 14px;
+      }
+
+      .detail-layout {
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        gap: 14px;
+      }
+
+      .ai-layout {
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        gap: 14px;
+      }
+
+      .caption {
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="title">SSBoard 业务流程图与页面原型图</div>
+      <p class="subtitle">低保真视觉草案，供 PRD 评审、页面结构确认和 Canva 汇报设计参考。</p>
+
+      <section class="section">
+        <h2>业务流程图</h2>
+        <div class="flow">
+          <div class="node">
+            <strong>1. 数据接入</strong>
+            <span>开放 API</span>
+            <span>授权报表</span>
+            <span>手工导入</span>
+          </div>
+          <div class="arrow"></div>
+          <div class="node">
+            <strong>2. 清洗建模</strong>
+            <span>字段标准化</span>
+            <span>实体映射</span>
+            <span>口径对齐</span>
+          </div>
+          <div class="arrow"></div>
+          <div class="node">
+            <strong>3. 榜单计算</strong>
+            <span>指标快照</span>
+            <span>日榜周榜</span>
+            <span>涨跌分析</span>
+          </div>
+          <div class="arrow"></div>
+          <div class="node">
+            <strong>4. 页面展示</strong>
+            <span>首页总览</span>
+            <span>排行榜</span>
+            <span>详情页</span>
+          </div>
+          <div class="arrow"></div>
+          <div class="node">
+            <strong>5. AI 分析</strong>
+            <span>NL2SQL</span>
+            <span>自动图表</span>
+            <span>脚本沙箱</span>
+          </div>
+          <div class="arrow"></div>
+          <div class="node">
+            <strong>6. 结果产出</strong>
+            <span>图表导出</span>
+            <span>分析摘要</span>
+            <span>汇报材料</span>
+          </div>
+        </div>
+        <div class="caption">主流程从数据接入开始，经过标准化和榜单计算后进入前台展示，再由 AI 能力完成更深的分析与产出。</div>
+      </section>
+
+      <section class="section">
+        <h2>页面原型图</h2>
+        <div class="artboard-grid">
+          <div class="artboard">
+            <div class="artboard-header">
+              <strong>首页总览</strong>
+              <span class="tag">Home Dashboard</span>
+            </div>
+            <div class="shell">
+              <div class="nav">
+                <div class="box">Logo / 产品名</div>
+                <div class="box">搜索 / 时间 / 来源 / 平台 / 题材</div>
+                <div class="box">登录态 / 最近任务 / 快捷入口</div>
+              </div>
+              <div class="kpi-row">
+                <div class="box">KPI 01<br />在榜作品数</div>
+                <div class="box">KPI 02<br />上新作品数</div>
+                <div class="box">KPI 03<br />热度涨幅冠军</div>
+                <div class="box">KPI 04<br />数据覆盖率</div>
+              </div>
+              <div class="rank-grid">
+                <div class="box">艺人热榜<div class="mini-lines"><div></div><div></div><div></div><div></div></div></div>
+                <div class="box">角色热榜<div class="mini-lines"><div></div><div></div><div></div><div></div></div></div>
+                <div class="box">剧集热榜<div class="mini-lines"><div></div><div></div><div></div><div></div></div></div>
+                <div class="box">电影热榜<div class="mini-lines"><div></div><div></div><div></div><div></div></div></div>
+              </div>
+              <div class="two-col">
+                <div class="box">趋势分析图 / 来源对比 / 题材分布</div>
+                <div class="box">AI 查询台<br />一句话查数据<br />推荐问题<br />最近分析记录</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="artboard">
+            <div class="artboard-header">
+              <strong>榜单页</strong>
+              <span class="tag">Ranking Page</span>
+            </div>
+            <div class="shell">
+              <div class="side-layout">
+                <div class="box">筛选栏<br />时间<br />来源<br />平台<br />题材<br />排序方式</div>
+                <div class="box">
+                  榜单主表
+                  <div class="table-lines">
+                    <div></div><div></div><div></div><div></div><div></div><div></div>
+                    <div></div><div></div><div></div><div></div>
+                  </div>
+                </div>
+                <div class="box">右侧分析<br />涨跌趋势<br />来源拆解<br />相关标签</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="artboard">
+            <div class="artboard-header">
+              <strong>实体详情页</strong>
+              <span class="tag">Work / Person / Character</span>
+            </div>
+            <div class="shell">
+              <div class="detail-layout">
+                <div class="box">实体基础信息<br />海报/头像<br />标签<br />所属平台<br />更新时间</div>
+                <div>
+                  <div class="box" style="margin-bottom: 14px;">热度趋势 / 榜单轨迹 / 指标卡</div>
+                  <div class="two-col">
+                    <div class="box">关联关系<br />演员阵容 / 角色关系 / 合作网络</div>
+                    <div class="box">事件时间线<br />定档 / 上映 / 开播 / 获奖</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="artboard">
+            <div class="artboard-header">
+              <strong>AI 查询工作台</strong>
+              <span class="tag">AI Analytics</span>
+            </div>
+            <div class="shell">
+              <div class="ai-layout">
+                <div class="box">问题输入<br />示例问题<br />推荐分析模板<br />任务列表</div>
+                <div>
+                  <div class="box" style="margin-bottom: 14px;">执行逻辑<br />意图识别 / SQL 说明 / 风险等级 / 数据范围</div>
+                  <div class="two-col">
+                    <div class="box">结果图表区<br />折线 / 柱状 / 饼图 / 指标卡</div>
+                    <div class="box">分析摘要区<br />结论 / 洞察 / 导出按钮</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="caption">原型图强调“行业情报台”的信息密度与榜单感：顶部强筛选、中部榜单矩阵、底部 AI 分析入口。</div>
+      </section>
+    </div>
+  </body>
+</html>

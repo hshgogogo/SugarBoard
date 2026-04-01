@@ -1,0 +1,22 @@
+@page {
+  size: A3 landscape;
+  margin: 8mm;
+}
+
+html,
+body {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  background: #0f1115 !important;
+}
+
+body {
+  margin: 0 !important;
+}
+
+.page {
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 16px !important;
+}

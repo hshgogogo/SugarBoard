@@ -1,0 +1,100 @@
+[
+  {
+    "slide": 1,
+    "title": "封面",
+    "asset_name": "SSBoard 旁白 01 封面",
+    "asset_id": "VAHFh3-Nr8Q",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/01-封面.m4a"
+  },
+  {
+    "slide": 2,
+    "title": "项目概览",
+    "asset_name": "SSBoard 旁白 02 项目概览",
+    "asset_id": "VAHFh78f2W0",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/02-项目概览.m4a"
+  },
+  {
+    "slide": 3,
+    "title": "为什么现在要做",
+    "asset_name": "SSBoard 旁白 03 为什么现在要做",
+    "asset_id": "VAHFh3ETmBU",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/03-为什么现在要做.m4a"
+  },
+  {
+    "slide": 4,
+    "title": "目标用户与价值",
+    "asset_name": "SSBoard 旁白 04 目标用户与价值",
+    "asset_id": "VAHFh9wFubw",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/04-目标用户与价值.m4a"
+  },
+  {
+    "slide": 5,
+    "title": "v1 产品边界",
+    "asset_name": "SSBoard 旁白 05 v1 产品边界",
+    "asset_id": "VAHFh-IbTac",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/05-v1-产品边界.m4a"
+  },
+  {
+    "slide": 6,
+    "title": "核心业务流程",
+    "asset_name": "SSBoard 旁白 06 核心业务流程",
+    "asset_id": "VAHFhxd52NM",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/06-核心业务流程.m4a"
+  },
+  {
+    "slide": 7,
+    "title": "首页原型",
+    "asset_name": "SSBoard 旁白 07 首页原型",
+    "asset_id": "VAHFh25s3pw",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/07-首页原型.m4a"
+  },
+  {
+    "slide": 8,
+    "title": "榜单页与详情页原型",
+    "asset_name": "SSBoard 旁白 08 榜单页与详情页原型",
+    "asset_id": "VAHFh6l2LeI",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/08-榜单页与详情页原型.m4a"
+  },
+  {
+    "slide": 9,
+    "title": "数据体系设计",
+    "asset_name": "SSBoard 旁白 09 数据体系设计",
+    "asset_id": "VAHFh40HCrs",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/09-数据体系设计.m4a"
+  },
+  {
+    "slide": 10,
+    "title": "数据来源策略",
+    "asset_name": "SSBoard 旁白 10 数据来源策略",
+    "asset_id": "VAHFh4fZcm4",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/10-数据来源策略.m4a"
+  },
+  {
+    "slide": 11,
+    "title": "AI 能力设计",
+    "asset_name": "SSBoard 旁白 11 AI 能力设计",
+    "asset_id": "VAHFhz6z6iQ",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/11-ai-能力设计.m4a"
+  },
+  {
+    "slide": 12,
+    "title": "技术架构与实施路径",
+    "asset_name": "SSBoard 旁白 12 技术架构与实施路径",
+    "asset_id": "VAHFh56Svj8",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/12-技术架构与实施路径.m4a"
+  },
+  {
+    "slide": 13,
+    "title": "风险与决策建议",
+    "asset_name": "SSBoard 旁白 13 风险与决策建议",
+    "asset_id": "VAHFh0j9CsY",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/13-风险与决策建议.m4a"
+  },
+  {
+    "slide": 14,
+    "title": "下一步建议",
+    "asset_name": "SSBoard 旁白 14 下一步建议",
+    "asset_id": "VAHFhz-BifY",
+    "source_file": "/Users/hsh/Desktop/ssboard/voiceover/audio/14-下一步建议.m4a"
+  }
+]

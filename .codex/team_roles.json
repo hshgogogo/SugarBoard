@@ -1,0 +1,82 @@
+{
+  "team_name": "sugar-ai-team",
+  "template_id": "sugarai",
+  "controller_role": "lead-orchestrator",
+  "branch_prefix": "sugar-ai",
+  "worktree_root": ".worktrees",
+  "roles": {
+    "lead-orchestrator": {
+      "display_name": "Lead Orchestrator",
+      "description": "Controller that owns planning, gates, and integration.",
+      "instructions": ".codex/instructions/lead-orchestrator.md",
+      "skill_allowlist": ["super-powers"],
+      "needs_worktree": false,
+      "worktree_path": "."
+    },
+    "product-analyst": {
+      "display_name": "Product Analyst",
+      "description": "Owns spec.md and acceptance criteria.",
+      "instructions": ".codex/instructions/product-analyst.md",
+      "skill_allowlist": ["product-spec-writer"],
+      "needs_worktree": false,
+      "worktree_path": "."
+    },
+    "solution-architect": {
+      "display_name": "Solution Architect",
+      "description": "Owns architecture.md and api-contract.yaml.",
+      "instructions": ".codex/instructions/solution-architect.md",
+      "skill_allowlist": ["architecture-contract-designer"],
+      "needs_worktree": false,
+      "worktree_path": "."
+    },
+    "frontend-engineer": {
+      "display_name": "Frontend Engineer",
+      "description": "Owns React or Next UI delivery.",
+      "instructions": ".codex/instructions/frontend-engineer.md",
+      "skill_allowlist": ["frontend-design"],
+      "needs_worktree": true,
+      "worktree_path": ".worktrees/frontend-engineer"
+    },
+    "backend-engineer": {
+      "display_name": "Backend Engineer",
+      "description": "Owns FastAPI, database, auth, and job execution.",
+      "instructions": ".codex/instructions/backend-engineer.md",
+      "skill_allowlist": ["backend-service-builder"],
+      "needs_worktree": true,
+      "worktree_path": ".worktrees/backend-engineer"
+    },
+    "ai-engineer": {
+      "display_name": "AI Engineer",
+      "description": "Owns LangChain, LangGraph, LangSmith, and RAG or agent workflows.",
+      "instructions": ".codex/instructions/ai-engineer.md",
+      "skill_allowlist": [
+        "langchain-fundamentals",
+        "langchain-middleware",
+        "langgraph-fundamentals",
+        "langgraph-persistence",
+        "langgraph-human-in-the-loop",
+        "langsmith-trace",
+        "langsmith-dataset",
+        "langsmith-evaluator"
+      ],
+      "needs_worktree": true,
+      "worktree_path": ".worktrees/ai-engineer"
+    },
+    "qa-reviewer": {
+      "display_name": "QA Reviewer",
+      "description": "Owns test planning, regression checks, and quality gates.",
+      "instructions": ".codex/instructions/qa-reviewer.md",
+      "skill_allowlist": ["qa-gatekeeper"],
+      "needs_worktree": true,
+      "worktree_path": ".worktrees/qa-reviewer"
+    },
+    "devops-release": {
+      "display_name": "DevOps Release",
+      "description": "Owns release plan, rollback plan, and environment readiness.",
+      "instructions": ".codex/instructions/devops-release.md",
+      "skill_allowlist": ["release-planner"],
+      "needs_worktree": false,
+      "worktree_path": "."
+    }
+  }
+}

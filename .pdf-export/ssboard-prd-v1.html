@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>SSBoard PRD v1</title>
+  <style>
+
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">@page {
+size: A4;
+margin: 16mm 14mm 18mm;
+}
+:root {
+--text: #1f2937;
+--muted: #4b5563;
+--line: #d1d5db;
+--heading: #111827;
+--bg-soft: #f8fafc;
+--accent: #1d4ed8;
+}
+html {
+font-size: 14px;
+}
+body {
+margin: 0 auto;
+max-width: 900px;
+color: var(--text);
+font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+line-height: 1.7;
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+color: var(--heading);
+line-height: 1.3;
+margin-top: 1.3em;
+margin-bottom: 0.55em;
+page-break-after: avoid;
+}
+h1 {
+font-size: 2rem;
+border-bottom: 2px solid var(--line);
+padding-bottom: 0.35em;
+}
+h2 {
+font-size: 1.45rem;
+border-left: 4px solid var(--accent);
+padding-left: 0.55em;
+}
+h3 {
+font-size: 1.18rem;
+}
+p,
+ul,
+ol,
+table,
+blockquote,
+pre {
+margin-top: 0.7em;
+margin-bottom: 0.7em;
+}
+ul,
+ol {
+padding-left: 1.45em;
+}
+li + li {
+margin-top: 0.18em;
+}
+table {
+width: 100%;
+border-collapse: collapse;
+font-size: 0.95rem;
+}
+th,
+td {
+border: 1px solid var(--line);
+padding: 0.55em 0.7em;
+text-align: left;
+vertical-align: top;
+}
+th {
+background: var(--bg-soft);
+}
+blockquote {
+margin-left: 0;
+padding: 0.1em 1em;
+border-left: 4px solid #cbd5e1;
+color: var(--muted);
+background: #f8fafc;
+}
+code {
+font-family: "SFMono-Regular", "Menlo", "Consolas", monospace;
+font-size: 0.92em;
+background: #eef2ff;
+padding: 0.1em 0.35em;
+border-radius: 4px;
+}
+pre {
+overflow: auto;
+padding: 0.85em 1em;
+border-radius: 8px;
+background: #111827;
+color: #f9fafb;
+}
+pre code {
+background: transparent;
+color: inherit;
+padding: 0;
+}
+a {
+color: var(--accent);
+text-decoration: none;
+}
+img {
+max-width: 100%;
+}
+hr {
+border: 0;
+border-top: 1px solid var(--line);
+margin: 1.5em 0;
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">SSBoard PRD v1</h1>
+</header>
+<h1 id="ssboard-prd-v1">SSBoard PRD v1</h1>
+<h2 id="1-文档信息">1. 文档信息</h2>
+<ul>
+<li>项目名称：SSBoard 中国影视行业数据统计与分析看板平台</li>
+<li>文档版本：v1.0</li>
+<li>文档日期：2026-03-31</li>
+<li>文档状态：待评审</li>
+<li>参考输入：
+<ul>
+<li>白板草图：艺人热榜、角色热榜、剧集热榜、电影热榜、云合入口</li>
+<li>竞品资料：<a href="/Users/hsh/Desktop/GitHub_开源数据分析看板项目_TOP10_2026-03-31.md">GitHub_开源数据分析看板项目_TOP10_2026-03-31.md</a></li>
+</ul></li>
+</ul>
+<h2 id="2-项目背景">2. 项目背景</h2>
+<p>中国影视行业的数据分散在票房平台、内容平台、公开公示、行业报告和人工表格中，团队在做选题、宣发、艺人观察、竞品分析时，经常需要跨平台搬运数据、手工对表和临时出图，效率低、口径不统一。</p>
+<p>本项目希望先建设一个内部原型平台，围绕四类核心榜单搭建一套“数据汇聚 +
+榜单计算 + 智能分析 +
+图表展示”的可扩展体系，为后续接入更多行业数据、自然语言分析和算法洞察打基础。</p>
+<h2 id="3-产品目标">3. 产品目标</h2>
+<h3 id="31-业务目标">3.1 业务目标</h3>
+<ol type="1">
+<li>在一个平台内集中查看中国影视行业核心榜单。</li>
+<li>支持按时间、平台、题材、来源筛选和对比数据。</li>
+<li>支持通过自然语言检索行业数据，并自动生成图表与解释。</li>
+<li>为后续接入授权数据源、行业模型和机器学习算法预留标准接口。</li>
+</ol>
+<h3 id="32-v1-成功标准">3.2 v1 成功标准</h3>
+<ol type="1">
+<li>四类榜单可稳定展示：艺人、角色、剧集、电影。</li>
+<li>数据可追溯到来源与日期，榜单口径清晰。</li>
+<li>支持至少一种自然语言到 SQL 的只读查询链路。</li>
+<li>用户能够在 3 分钟内完成一次“查看榜单 -&gt; 下钻详情 -&gt; 发起 AI
+分析”的完整流程。</li>
+</ol>
+<h2 id="4-产品定位">4. 产品定位</h2>
+<ul>
+<li>产品阶段：内部原型</li>
+<li>使用对象：
+<ul>
+<li>内容策划与研究团队</li>
+<li>宣发与市场团队</li>
+<li>投资、行业分析与业务负责人</li>
+</ul></li>
+<li>产品类型：垂直行业数据看板，而不是通用 BI 工具</li>
+<li>首发范围：四类核心榜单 + 实体详情 + AI 查询台</li>
+</ul>
+<h2 id="5-用户角色">5. 用户角色</h2>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>典型目标</th>
+<th>核心需求</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>行业分析师</td>
+<td>快速输出对比报告</td>
+<td>统一数据口径、趋势图、导出能力</td>
+</tr>
+<tr>
+<td>宣发同学</td>
+<td>观察竞品与演员热度</td>
+<td>榜单波动、题材与平台对比</td>
+</tr>
+<tr>
+<td>内容策划</td>
+<td>做选题与阵容判断</td>
+<td>剧集热度、角色关注度、艺人关联</td>
+</tr>
+<tr>
+<td>管理层</td>
+<td>看大盘与异常变化</td>
+<td>首页 KPI、周报视角、自动分析摘要</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-核心问题">6. 核心问题</h2>
+<ol type="1">
+<li>数据来源分散，人工整理成本高。</li>
+<li>榜单更新频率和统计口径不一致。</li>
+<li>临时报表多，重复出图效率低。</li>
+<li>想问复杂问题时，需要分析师手写 SQL 和 Python。</li>
+</ol>
+<h2 id="7-方案概述">7. 方案概述</h2>
+<p>平台采用“三层架构”：</p>
+<ol type="1">
+<li>数据层：接入 API、公开页面、人工导入和授权数据。</li>
+<li>服务层：完成清洗、建模、榜单计算、缓存、AI 查询和任务调度。</li>
+<li>展示层：提供首页看板、排行榜、详情页、AI 查询台与图表结果页。</li>
+</ol>
+<h2 id="8-业务流程">8. 业务流程</h2>
+<pre class="mermaid"><code>flowchart LR
+    A[数据源接入&lt;br/&gt;API / 授权报表 / 公开页面 / 手工导入] --&gt; B[数据清洗与标准化]
+    B --&gt; C[主数据建模&lt;br/&gt;作品 / 人物 / 角色 / 平台]
+    C --&gt; D[指标快照入库]
+    D --&gt; E[榜单计算任务]
+    E --&gt; F[首页与榜单页展示]
+    C --&gt; G[实体详情页聚合]
+    D --&gt; H[AI 查询台]
+    H --&gt; I[NL2SQL / 图表生成 / 分析脚本]
+    I --&gt; J[结果页与导出]</code></pre>
+<h2 id="9-功能范围">9. 功能范围</h2>
+<h3 id="91-v1-必做">9.1 v1 必做</h3>
+<ol type="1">
+<li>首页总览</li>
+<li>四类榜单页</li>
+<li>实体详情页</li>
+<li>多条件筛选</li>
+<li>趋势图与分布图</li>
+<li>AI 查询台</li>
+<li>异步分析任务与结果页</li>
+<li>数据来源与更新时间展示</li>
+</ol>
+<h3 id="92-v1-不做">9.2 v1 不做</h3>
+<ol type="1">
+<li>多租户</li>
+<li>支付系统</li>
+<li>复杂权限体系</li>
+<li>大规模用户行为埋点分析</li>
+<li>自动化多模态视频理解</li>
+<li>未授权商业平台的高风险抓取</li>
+</ol>
+<h2 id="10-页面设计">10. 页面设计</h2>
+<h3 id="101-首页">10.1 首页</h3>
+<ul>
+<li>顶部：Logo、全局搜索、时间选择、来源筛选、题材筛选</li>
+<li>KPI 区：作品总数、上新数量、热度涨幅冠军、数据覆盖率</li>
+<li>榜单区：艺人热榜、角色热榜、剧集热榜、电影热榜</li>
+<li>分析区：趋势图、题材分布、平台对比</li>
+<li>AI 区：自然语言输入、推荐问题、最近分析任务</li>
+</ul>
+<h3 id="102-榜单页">10.2 榜单页</h3>
+<ul>
+<li>左侧筛选栏：时间、平台、类型、来源、排序</li>
+<li>中部榜单表：排名、名称、分值、涨跌、标签</li>
+<li>右侧图表：趋势对比、来源拆解</li>
+</ul>
+<h3 id="103-详情页">10.3 详情页</h3>
+<ul>
+<li>作品详情：基础信息、热度走势、演员阵容、角色关系、平台信息</li>
+<li>艺人详情：代表作品、近期热度、合作关系图</li>
+<li>角色详情：所属作品、饰演者、角色趋势</li>
+</ul>
+<h3 id="104-ai-查询台">10.4 AI 查询台</h3>
+<ul>
+<li>查询输入区：自然语言问题</li>
+<li>SQL 解释区：生成逻辑、风险等级、数据范围</li>
+<li>结果图区：自动图表 + 指标卡</li>
+<li>结果说明区：中文分析摘要</li>
+</ul>
+<h2 id="11-数据策略">11. 数据策略</h2>
+<h3 id="111-数据来源优先级">11.1 数据来源优先级</h3>
+<ol type="1">
+<li>官方/开放 API 与公开公示</li>
+<li>授权商业数据或合作方导出</li>
+<li>人工导入 CSV/Excel</li>
+<li>合规前提下的受控采集</li>
+</ol>
+<h3 id="112-v1-建议接入数据">11.2 v1 建议接入数据</h3>
+<ol type="1">
+<li>TMDb：电影、剧集、人物元数据</li>
+<li>广电及地方公开公示数据：备案、题材、公开统计</li>
+<li>手工导入：猫眼、灯塔、云合、艺恩等合作或导出数据</li>
+</ol>
+<h3 id="113-合规要求">11.3 合规要求</h3>
+<ol type="1">
+<li>数据来源必须记录采集方式、授权状态和更新时间。</li>
+<li>未获得授权的商业平台数据不得作为自动抓取主方案。</li>
+<li>AI 只允许访问只读分析视图，不直接访问底层写表。</li>
+</ol>
+<h2 id="12-数据模型">12. 数据模型</h2>
+<h3 id="121-主实体">12.1 主实体</h3>
+<ul>
+<li>works：电影、剧集</li>
+<li>persons：艺人、导演、编剧等</li>
+<li>characters：角色</li>
+<li>platforms：院线、电视台、流媒体平台</li>
+<li>sources：数据来源</li>
+</ul>
+<h3 id="122-关系实体">12.2 关系实体</h3>
+<ul>
+<li>work_person_credits：作品与人物多对多</li>
+<li>character_castings：角色与饰演者多对多</li>
+<li>work_platform_releases：作品与平台关系</li>
+</ul>
+<h3 id="123-事实数据">12.3 事实数据</h3>
+<ul>
+<li>entity_metric_snapshots：实体日维度指标快照</li>
+<li>ranking_snapshots：榜单快照</li>
+<li>release_events：上映、开播、定档等事件</li>
+<li>ai_queries / analysis_jobs / analysis_artifacts：AI 分析与产出</li>
+</ul>
+<h2 id="13-ai-能力设计">13. AI 能力设计</h2>
+<h3 id="131-v1-ai-范围">13.1 v1 AI 范围</h3>
+<ol type="1">
+<li>自然语言转只读 SQL</li>
+<li>自动选择适合的图表</li>
+<li>生成简短中文分析摘要</li>
+<li>支持低风险自动执行</li>
+<li>高风险脚本进入异步任务</li>
+</ol>
+<h3 id="132-安全策略">13.2 安全策略</h3>
+<ol type="1">
+<li>仅允许 <code>SELECT</code> 语句</li>
+<li>仅允许访问白名单视图</li>
+<li>限制返回行数、执行时长和资源消耗</li>
+<li>Python 分析脚本运行在隔离容器中</li>
+<li>所有 AI 结果保留审计日志</li>
+</ol>
+<h2 id="14-非功能要求">14. 非功能要求</h2>
+<h3 id="141-性能">14.1 性能</h3>
+<ol type="1">
+<li>首页和榜单页首屏接口响应目标 &lt; 1.5 秒</li>
+<li>AI 低风险查询目标 &lt; 10 秒返回图表</li>
+<li>长时分析任务进入异步队列并显示状态</li>
+</ol>
+<h3 id="142-可用性">14.2 可用性</h3>
+<ol type="1">
+<li>榜单页必须清楚显示“更新时间”和“来源”</li>
+<li>数据缺失时提供空状态说明</li>
+<li>任务失败时返回可读错误和重试入口</li>
+</ol>
+<h3 id="143-可扩展性">14.3 可扩展性</h3>
+<ol type="1">
+<li>榜单类型可配置扩展</li>
+<li>数据源可通过 connector 方式接入</li>
+<li>AI 能力支持切换模型与策略</li>
+</ol>
+<h2 id="15-技术架构建议">15. 技术架构建议</h2>
+<h3 id="151-技术选型">15.1 技术选型</h3>
+<ul>
+<li>前端：Next.js + TypeScript + Tailwind CSS + ECharts</li>
+<li>后端：FastAPI + Pydantic + SQLAlchemy</li>
+<li>数据库：PostgreSQL</li>
+<li>任务队列：Celery + Redis</li>
+<li>对象存储：MinIO</li>
+<li>容器化：Docker Compose</li>
+</ul>
+<h3 id="152-开发顺序">15.2 开发顺序</h3>
+<ol type="1">
+<li>先定义数据模型、API 合同和样例数据</li>
+<li>前端基于 mock 数据并行画页面</li>
+<li>后端补真实数据链路和异步任务</li>
+<li>最后联调 AI 查询台与脚本执行</li>
+</ol>
+<h2 id="16-实施里程碑">16. 实施里程碑</h2>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>周期</th>
+<th>目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1</td>
+<td>第 1 周</td>
+<td>脚手架、PRD、设计稿、数据库初版、mock API</td>
+</tr>
+<tr>
+<td>M2</td>
+<td>第 2 周</td>
+<td>四类榜单真实数据导入、首页与榜单页</td>
+</tr>
+<tr>
+<td>M3</td>
+<td>第 3 周</td>
+<td>详情页、趋势图、来源管理、缓存</td>
+</tr>
+<tr>
+<td>M4</td>
+<td>第 4 周</td>
+<td>AI 查询台、NL2SQL、图表自动生成</td>
+</tr>
+<tr>
+<td>M5</td>
+<td>第 5 周</td>
+<td>分析脚本沙箱、异常检测、导出与内部试用</td>
+</tr>
+</tbody>
+</table>
+<h2 id="17-验收标准">17. 验收标准</h2>
+<ol type="1">
+<li>可查看四类榜单，并按日期与来源过滤。</li>
+<li>可进入至少 3 类详情页并查看趋势图。</li>
+<li>可输入自然语言问题并拿到可解释的图表结果。</li>
+<li>所有榜单记录可追溯到来源和快照时间。</li>
+<li>高风险 AI 任务不会在主服务中直接执行。</li>
+</ol>
+<h2 id="18-风险与应对">18. 风险与应对</h2>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>说明</th>
+<th>应对方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据授权风险</td>
+<td>商业平台数据抓取风险高</td>
+<td>以授权、导出和手工导入为主</td>
+</tr>
+<tr>
+<td>口径不一致</td>
+<td>不同来源指标定义不同</td>
+<td>建立指标映射与口径说明</td>
+</tr>
+<tr>
+<td>AI 幻觉</td>
+<td>SQL 或结论可能出错</td>
+<td>只读白名单视图 + 风险分级</td>
+</tr>
+<tr>
+<td>长任务阻塞</td>
+<td>分析脚本耗时长</td>
+<td>异步队列 + 状态页</td>
+</tr>
+</tbody>
+</table>
+<h2 id="19-附件">19. 附件</h2>
+<ul>
+<li>视觉与原型文件：<a href="/Users/hsh/Desktop/ssboard/docs/ssboard-flow-and-wireframes.html">ssboard-flow-and-wireframes.html</a></li>
+<li>演示讲稿草案：<a href="/Users/hsh/Desktop/ssboard/docs/ssboard-presentation-script.md">ssboard-presentation-script.md</a></li>
+</ul>
+</body>
+</html>
