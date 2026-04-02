@@ -1,90 +1,67 @@
-import Link from 'next/link';
-import { FilterControls } from '@/components/filter-controls';
+import { AppShell } from '@/components/app-shell';
 import {
-  ChartGrid,
-  PageHeader,
-  ProvenanceCard,
-  RankingPanels,
-  SectionHeading,
-  SummaryGrid,
-} from '@/components/ui';
-import { getBootstrapFilters, getHomeOverview, sampleEntityIds } from '@/lib/mock-api';
-import { parseFilterSet, readParam } from '@/lib/query';
+  BoardOverviewCard,
+  FeatureCard,
+  MetricRibbon,
+  NewsTicker,
+} from '@/components/strategy-kit';
+import { PageTitle, SectionTitle, StateCard, Surface } from '@/components/ui-kit';
+import { strategyBoards, tickerItems } from '@/lib/strategy-data';
 
-type HomePageProps = {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-};
-
-export default async function HomePage({ searchParams }: HomePageProps) {
-  const params = searchParams ? await searchParams : {};
-  const bootstrap = await getBootstrapFilters(readParam(params, 'as_of'));
-  const filters = parseFilterSet(params, bootstrap.data.default_filters);
-  const overview = await getHomeOverview(filters);
+export default function HomePage() {
+  const spotlightFeatures = strategyBoards.flatMap((board) =>
+    board.features.slice(0, 1).map((feature) => ({ board, feature })),
+  );
 
   return (
-    <div className="page-stack">
-      <section className="hero-panel stack">
-        <PageHeader
-          eyebrow="Homepage Overview"
-          title="首页总览"
-          description="先看今天最值得关注的对象，再把同一套筛选条件带到榜单页、详情页和 AI 工作台。"
-          actions={
-            <>
-              <Link className="button-link" href="/rankings/artists">
-                榜单页
-              </Link>
-              <Link className="button-link" href={`/entities/work/${sampleEntityIds.work}`}>
-                详情页
-              </Link>
-              <Link className="button-solid" href="/analysis">
-                AI 工作台
-              </Link>
-            </>
-          }
+    <AppShell currentPath="/">
+      <section className="page-stack">
+        <PageTitle
+          eyebrow="Dashboard 2.0"
+          title="制片人决策总览"
+          description="这一版按 2.0 新方案重组为五大板块，并把每个功能拆成独立页面，方便你从宏观判断一路下钻到具体动作。"
         />
-        <SummaryGrid items={overview.data.kpis} />
-      </section>
-      <FilterControls bootstrap={bootstrap.data} initialFilters={filters} />
-      <section className="stack">
-        <SectionHeading
-          eyebrow="Rankings Preview"
-          title="四类榜单概览"
-          description="首页点击任一卡片即可保留公共筛选条件跳转到对应榜单页。"
-        />
-        <RankingPanels filters={filters} panels={overview.data.ranking_panels} />
-      </section>
-      <section className="detail-grid">
-        <div className="stack">
-          <SectionHeading
-            eyebrow="Auxiliary Analysis"
-            title="首页辅助分析"
-            description="用于快速判断当前口径下的平台与题材结构，以及大盘趋势。"
+
+        <Surface className="hero-surface">
+          <SectionTitle
+            title="五大板块总览"
+            subtitle="先看行业宏观与平台竞争，再看营销与技术决策。右侧侧栏改成图标式导航，进入任一板块后再继续打开具体功能页。"
           />
-          <ChartGrid charts={overview.data.analysis_panels} />
-          <div className="surface-card stack">
-            <SectionHeading
-              eyebrow="Recent Jobs"
-              title="最近 AI 任务"
-              description="让首页就能看到 AI 请求有没有成功、失败或需要缩小范围。"
-              aside={<Link className="button-link" href="/analysis">前往工作台</Link>}
-            />
-            <div className="ranking-list">
-              {overview.data.recent_analysis_jobs.map((job) => (
-                <Link className="ranking-list__row" href="/analysis" key={job.id}>
-                  <div className="row-meta">
-                    <strong>{job.question}</strong>
-                    <span className="chip">{job.status}</span>
-                  </div>
-                  <div className="muted">
-                    {job.risk_level} / {job.execution_mode ?? '不执行'} / {job.status_message ?? '查看详情'}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
+          <MetricRibbon
+            metrics={[
+              { label: '一级板块', value: '5 个', note: '宏观雷达、平台竞对、营销策略、外部技术、国产生态。' },
+              { label: '功能页面', value: '22 个', note: '每个功能单独成页，减少信息挤压。' },
+              { label: '当前风格', value: '大屏看板', note: '整体视觉向你给的电视大屏方案靠拢。' },
+            ]}
+          />
+        </Surface>
+
+        <div className="board-overview-grid">
+          {strategyBoards.map((board) => (
+            <BoardOverviewCard key={board.slug} board={board} />
+          ))}
         </div>
-        <ProvenanceCard provenance={overview.data.provenance} />
+
+        <Surface>
+          <SectionTitle
+            title="今日重点功能"
+            subtitle="每个板块先抽一项最值得看的功能作为入口，后续可继续切入对应的独立功能页。"
+          />
+          <div className="feature-grid feature-grid--compact">
+            {spotlightFeatures.map(({ board, feature }) => (
+              <FeatureCard key={`${board.slug}-${feature.slug}`} board={board} feature={feature} />
+            ))}
+          </div>
+        </Surface>
+
+        <StateCard
+          title="结构已切换到 2.0"
+          description="首页现在只负责做总览和导流，不再把所有功能塞进同一页。真正的功能信息会按板块分组，并在独立功能页中展开。"
+          tone="success"
+        />
+
+        <NewsTicker items={tickerItems} />
       </section>
-    </div>
+    </AppShell>
   );
 }

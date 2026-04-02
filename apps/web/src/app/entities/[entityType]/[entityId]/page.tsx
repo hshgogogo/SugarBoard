@@ -1,51 +1,33 @@
 import { notFound } from 'next/navigation';
-import {
-  EntityDetailSections,
-  PageHeader,
-  ProvenanceCard,
-} from '@/components/ui';
-import { getEntityDetail } from '@/lib/mock-api';
-import { readParam } from '@/lib/query';
 
-type EntityRouteParams = {
-  entityType: string;
-  entityId: string;
-};
+import { EntityDetailPageClient } from '@/components/entity-detail-page-client';
+import type { EntityType } from '@/lib/api-contract';
+import { staticEntityRouteParams } from '@/lib/mock-api';
 
-type EntityPageProps = {
-  params: Promise<EntityRouteParams>;
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-};
+const ENTITY_TYPES: EntityType[] = ['work', 'person', 'character'];
 
-const ENTITY_TYPES = new Set(['work', 'person', 'character']);
+type Params =
+  | Promise<{ entityType: string; entityId: string }>
+  | { entityType: string; entityId: string };
 
-export default async function EntityPage({ params, searchParams }: EntityPageProps) {
-  const route = await params;
-  if (!ENTITY_TYPES.has(route.entityType)) notFound();
+export function generateStaticParams() {
+  return staticEntityRouteParams;
+}
 
-  const query = searchParams ? await searchParams : {};
-  const response = await getEntityDetail({
-    entityType: route.entityType as 'work' | 'person' | 'character',
-    entityId: route.entityId,
-    asOf: readParam(query, 'as_of') ?? null,
-    trendWindow: (readParam(query, 'trend_window') as '7d' | '30d' | '90d' | '365d' | undefined) ?? '30d',
-  });
+export const dynamicParams = false;
 
-  if (!response) notFound();
+export default async function EntityDetailPage({
+  params,
+}: {
+  params: Params;
+}) {
+  const { entityType: entityTypeParam, entityId } = await params;
+  if (!ENTITY_TYPES.includes(entityTypeParam as EntityType)) notFound();
 
   return (
-    <div className="page-stack">
-      <section className="hero-panel stack">
-        <PageHeader
-          eyebrow="Entity Detail"
-          title={response.data.entity.name}
-          description="详情页需要解释“为什么在榜、近期走势如何、与谁或什么作品相关”，并且在缺失数据时优雅降级。"
-        />
-      </section>
-      <section className="detail-grid">
-        <EntityDetailSections data={response.data} />
-        <ProvenanceCard provenance={response.data.provenance} />
-      </section>
-    </div>
+    <EntityDetailPageClient
+      entityType={entityTypeParam as EntityType}
+      entityId={entityId}
+    />
   );
 }

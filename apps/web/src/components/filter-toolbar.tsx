@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 
 import type { DateOption, FilterOption, FilterSet, WindowOption } from '@/lib/api-contract';
 import { makeHref, toggleArrayValue } from '@/lib/query';
@@ -31,7 +32,7 @@ function FilterGroup({
   children,
 }: {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <div className="filter-group">

@@ -1,23 +1,17 @@
 import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
+
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'SSBoard v1',
-  description: 'SSBoard Chinese entertainment analytics prototype',
+  title: '制片人决策看板 2.0',
+  description: 'SSBoard 2.0 strategic dashboard with sidebar navigation and one page per feature.',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="zh-CN">
-      <body>
-        <div className="shell">
-          <main className="shell__main">{children}</main>
-        </div>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

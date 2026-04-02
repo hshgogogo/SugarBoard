@@ -503,6 +503,11 @@ export const sampleEntityIds = {
     ALL_CATALOG.find((item) => item.entity_type === 'character' && Number(item.id.slice(-2)) % 7 === 0)?.id ?? '',
 };
 
+export const staticEntityRouteParams = ALL_CATALOG.map((item) => ({
+  entityType: item.entity_type,
+  entityId: item.id,
+}));
+
 function buildCatalog(rankingType: RankingType, baseNames: string[]): CatalogItem[] {
   return Array.from({ length: 60 }, (_, index) => {
     const nameSeed = baseNames[index % baseNames.length];

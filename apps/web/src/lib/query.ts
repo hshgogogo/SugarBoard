@@ -6,6 +6,8 @@ type SearchParamsInput =
   | undefined
   | null;
 
+type QueryValue = string | number | string[] | null | undefined;
+
 const rankingTypeLabels: Record<RankingType, string> = {
   artists: '艺人热榜',
   characters: '角色热榜',
@@ -54,7 +56,7 @@ export function parseFilterSet(
   };
 }
 
-export function buildQueryString(values: Record<string, string | string[] | null | undefined>): string {
+export function buildQueryString(values: Record<string, QueryValue>): string {
   const query = new URLSearchParams();
 
   Object.entries(values).forEach(([key, value]) => {
@@ -64,7 +66,7 @@ export function buildQueryString(values: Record<string, string | string[] | null
       query.set(key, value.join(','));
       return;
     }
-    query.set(key, value);
+    query.set(key, String(value));
   });
 
   return query.toString();
@@ -72,7 +74,7 @@ export function buildQueryString(values: Record<string, string | string[] | null
 
 export function mergeQueryString(
   current: URLSearchParams,
-  patch: Record<string, string | string[] | null | undefined>,
+  patch: Record<string, QueryValue>,
 ): string {
   const next = new URLSearchParams(current.toString());
 
@@ -81,7 +83,7 @@ export function mergeQueryString(
       next.delete(key);
       return;
     }
-    next.set(key, Array.isArray(value) ? value.join(',') : value);
+    next.set(key, Array.isArray(value) ? value.join(',') : String(value));
   });
 
   return next.toString();
@@ -137,7 +139,7 @@ export function rankingTypeToEntityType(rankingType: RankingType): 'person' | 'c
   return 'work';
 }
 
-export function makeHref(pathname: string, query: Record<string, string | string[] | null | undefined>): string {
+export function makeHref(pathname: string, query: Record<string, QueryValue>): string {
   const queryString = buildQueryString(query);
   return queryString ? `${pathname}?${queryString}` : pathname;
 }

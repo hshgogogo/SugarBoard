@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 import type {
   AnalysisJobSummary,
@@ -24,11 +24,17 @@ import { formatDate, formatDateTime, formatNumber, formatPercent, makeHref } fro
 export function Surface({
   children,
   className,
+  style,
 }: {
   children: ReactNode;
   className?: string;
+  style?: CSSProperties;
 }) {
-  return <section className={['surface', className].filter(Boolean).join(' ')}>{children}</section>;
+  return (
+    <section className={['surface', className].filter(Boolean).join(' ')} style={style}>
+      {children}
+    </section>
+  );
 }
 
 export function Badge({
