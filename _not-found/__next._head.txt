@@ -1,0 +1,5 @@
+1:"$Sreact.fragment"
+2:I[97367,["/SugarBoard/_next/static/chunks/01xlw8hd842-c.js","/SugarBoard/_next/static/chunks/0d3shmwh5_nmn.js"],"ViewportBoundary"]
+3:I[97367,["/SugarBoard/_next/static/chunks/01xlw8hd842-c.js","/SugarBoard/_next/static/chunks/0d3shmwh5_nmn.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+0:{"rsc":["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"制片人决策看板 2.0"}],["$","meta","1",{"name":"description","content":"SSBoard 2.0 strategic dashboard with sidebar navigation and one page per feature."}]]}]}]}],null]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"W4Gw2c_lLen2JepkPMgTN"}

@@ -1,0 +1,2 @@
+:HL["/SugarBoard/_next/static/chunks/165en58pe0xpj.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":20,"slots":{"children":{"name":"boards","param":null,"prefetchHints":0,"slots":{"children":{"name":"boardSlug","param":{"type":"d","key":"external-tech","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"featureSlug","param":{"type":"d","key":"generative-ai-video","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}}}},"staleTime":300,"buildId":"W4Gw2c_lLen2JepkPMgTN"}

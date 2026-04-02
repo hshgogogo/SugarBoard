@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fboards\u002F[boardSlug]","\u002Fboards\u002F[boardSlug]\u002F[featureSlug]","\u002Fentities\u002F[entityType]\u002F[entityId]","\u002Frankings\u002F[rankingType]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
