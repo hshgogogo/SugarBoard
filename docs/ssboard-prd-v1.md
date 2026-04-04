@@ -262,4 +262,3 @@ flowchart LR
 ## 19. 附件
 
 - 视觉与原型文件：[ssboard-flow-and-wireframes.html](/Users/hsh/Desktop/ssboard/docs/ssboard-flow-and-wireframes.html)
-- 演示讲稿草案：[ssboard-presentation-script.md](/Users/hsh/Desktop/ssboard/docs/ssboard-presentation-script.md)

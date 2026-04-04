@@ -43,7 +43,7 @@
     <rect x="1360" y="150" width="180" height="120" rx="18" fill="url(#panel)" stroke="#D7B46A" stroke-opacity="0.45"/>
     <text x="1384" y="188" fill="#F3F5F7" font-size="24" font-weight="700">6. 结果产出</text>
     <text x="1384" y="220" fill="#AAB1BF" font-size="16">图表导出 / 摘要</text>
-    <text x="1384" y="246" fill="#AAB1BF" font-size="16">汇报材料 / 复用</text>
+    <text x="1384" y="246" fill="#AAB1BF" font-size="16">结果复用 / 归档</text>
   </g>
 
   <g stroke="url(#line)" stroke-width="4">

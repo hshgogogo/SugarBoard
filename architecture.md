@@ -7,7 +7,6 @@ Primary Inputs:
 - `spec.md`
 - `docs/ssboard-prd-v1.md`
 - `docs/ssboard-flow-and-wireframes.html`
-- `docs/ssboard-execution-plan.md`
 - `/Users/hsh/Desktop/team.md`
 
 Important note:
