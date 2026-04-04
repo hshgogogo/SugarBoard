@@ -1,0 +1,35 @@
+{
+  "team": "sugarboard-minimal",
+  "roles": [
+    {
+      "name": "lead-orchestrator",
+      "owns": ["spec.md", "architecture.md", "api-contract.yaml", "docs/"],
+      "responsibility": "拆解目标、协调边界、整合产出"
+    },
+    {
+      "name": "frontend-engineer",
+      "owns": ["frontend/web"],
+      "responsibility": "前端页面、组件、交互、前端契约接入"
+    },
+    {
+      "name": "backend-engineer",
+      "owns": ["backend/api"],
+      "responsibility": "API、服务层、仓储层、后端测试"
+    },
+    {
+      "name": "ai-engineer",
+      "owns": ["ai/ai-core"],
+      "responsibility": "AI 规划、风险分级、摘要与图表能力"
+    },
+    {
+      "name": "data-engineer",
+      "owns": ["data/collectors", "data/database"],
+      "responsibility": "数据接入、清洗、数据库结构与视图"
+    },
+    {
+      "name": "qa-reviewer",
+      "owns": ["test-plan.md", "release-checklist.md"],
+      "responsibility": "验证、回归、发布前检查"
+    }
+  ]
+}
